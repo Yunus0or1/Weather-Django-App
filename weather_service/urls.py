@@ -14,14 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.conf.urls import url, include
 from weather_service_api import views as weather_service_api_views
 
 urlpatterns = [
-    url(r'^test/', weather_service_api_views.testCall, name="test"),
-    url(r'^load_test_server/', weather_service_api_views.loadTestServer, name="load_test_server"),
-    url(r'^server/', weather_service_api_views.server, name="server"),
+    re_path(r'^ping', weather_service_api_views.ping, name="ping"),
+    #path('forecast/<str:city>/', weather_service_api_views.getCurrentWeather, name="forecast"),
+    re_path(r'^forecast/(?P<city>[\w|\W]+)/$', weather_service_api_views.getCurrentWeather)
 
 ]

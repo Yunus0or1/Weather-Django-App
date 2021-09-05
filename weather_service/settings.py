@@ -1,7 +1,6 @@
 import environ
 import os
 
-
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
@@ -10,6 +9,7 @@ env = environ.Env(
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Reading Env File
 try:
     # .env file fetching
     environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -24,10 +24,22 @@ try:
     WEATHER_API_KEY = env('WEATHER_API_KEY')
 
 except Exception as e:
-    print("ERROR IN Loading Environment File in Settings.py. Please check if "
-          ".env file exists with these keys : SECRET_KEY, DEBUG, WEATHER_API_KEY")
-    raise SystemExit("Please fix the .env file and start the server again")
+    raise SystemExit("ERROR IN Loading Environment File in Settings.py. Please check if "
+                     ".env file exists with these keys : SECRET_KEY, DEBUG, WEATHER_API_KEY."
+                     "Please fix the .env file and start the server again")
 
+# Reading Version File
+try:
+
+    VERSION_FILE = open((os.path.join(BASE_DIR, 'VERSION')), "r")
+    VERSION = VERSION_FILE.read()
+    VERSION_FILE.close()
+
+except Exception as e:
+    raise SystemExit("ERROR IN Loading VERSION File in Settings.py. Please specify the version number of the server")
+
+print('WEATHER SERVICE API KEY: ' + WEATHER_API_KEY)
+print('VERSION: ' + VERSION)
 
 # All Allowed Host
 ALLOWED_HOSTS = ['*']

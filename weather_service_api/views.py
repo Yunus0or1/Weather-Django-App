@@ -2,73 +2,33 @@ import json
 from django.db import connection
 from django.http import JsonResponse
 from django.core.cache import cache
+from django.conf import settings
+
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.views.decorators.clickjacking import xframe_options_exempt
+
+from services import weather_api_call
+
+@api_view(['GET'])
+def ping(request):
+    return JsonResponse({"name": "weatherservice",
+                         "status": "ok",
+                         "version": settings.VERSION}, status=200)
 
 
-def server(request):
-    try:
-        cursor = connection.cursor()
-        cursor.execute("SELECT count(*)  FROM airports")
-        result = cursor.fetchall()
-        connection.close()
+@api_view(['GET'])
+def getCurrentWeather(request, city):
+    at = request.GET.get('at')
+    print(at)
 
-        redisCheck = cache.keys('*')
+    if at :
+        weather_api_call.currentWeatherAPICall(cityName=city)
 
-        if result and len(redisCheck) >= 0:
-            return JsonResponse({
-                'databaseMessage': "DATABASE RUNNING",
-                'redisMessage': redisCheck,
-                'message': "SERVER RUNNING",
-                'status': True,
-                'responseMessage': 200
-            })
+    if at is None:
+        weather_api_call.currentWeatherAPICall(cityName=city)
+    return JsonResponse({"name": "weatherservice",
+                         "status": "ok",
+                         "version": settings.VERSION}, status=200)
 
-        return JsonResponse({
-            'databaseMessage': "DATABASE STOPPED",
-            'redisMessage': "REDIS STOPPED",
-            'message': "SERVER RUNNING",
-            'status': False,
-            'responseMessage': 200
-        })
-
-    except Exception as e:
-        return JsonResponse({
-            'databaseMessage': "DATABASE STOPPED",
-            'redisMessage': "REDIS STOPPED",
-            'message': "SERVER STOPPED",
-            'status': False,
-            'responseMessage': 200
-        })
-
-
-def loadTestServer(request):
-    try:
-        key = "load_test_server"
-        data = json.dumps({"Latiude": "59.99", "Longitude": "61.88"})
-
-        cache.set(key, data, timeout=302400)
-        fetchedData = cache.get(key)
-
-        return JsonResponse({
-            'data': json.loads(fetchedData),
-            'status': True,
-            'responseMessage': 200
-        })
-
-    except Exception as e:
-        print("ERROR IN loadTestServer() method in user/views.py")
-        print(e)
-        return JsonResponse({
-            'status': False,
-            'responseMessage': 200
-        })
-
-
-def testCall(request):
-    print(request)
-    value = cache.keys('*')
-    return JsonResponse({
-        'data': len(value),
-        'data': value,
-        'status': True,
-        'responseMessage': 200
-    })
