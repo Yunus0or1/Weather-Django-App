@@ -32,6 +32,15 @@
       pip install -r requirements.txt
       ```
 
+    - You must create the .env file inside the project folder and run these commands:	
+      ```
+      sudo touch .env
+	  sudo chmod a+rwx .env
+	  echo "DEBUG=False" >> .env
+	  echo "SECRET_KEY=YOUR_SECRE_KEY" >> .env (Do not add !, #, / character in SECRET_KEY when using this command)
+	  echo "WEATHER_API_KEY=YOUR_WEATHER_API_KEY" >> .env
+      ```
+
     - Bind gunicorn with wsgi to test the server:
       ```
       gunicorn --bind 0.0.0.0:8000 <folder_name_where_wsgi_file_exists>.wsgi # Example ecom.wsgi or myProject.wsgi
@@ -67,8 +76,6 @@
  - Configure Nginx
    - Install it 
      ```
-     sudo fuser -k 80/tcp
-     sudo fuser -k 443/tcp
      sudo apt-get install nginx
      ```
  - Create a coniguration file using this command with the any name.
@@ -110,50 +117,7 @@
    ```
    sudo systemctl restart nginx
    ```
- - Let Python and Nginx access the staticfile and Mediafile properly. Write these commands.
-   ```
-   sudo 777 -R staticfile
-   sudo 777 -R mediafile
-   ```
- - Install SSL in Server Nginx
-   ```
-   sudo apt-get install software-properties-common
-   sudo add-apt-repository ppa:certbot/certbot
-   sudo apt-get install python-certbot-nginx
-   sudo ufw enable
-   sudo ufw allow 'Nginx Full'
-   sudo ufw delete allow 'Nginx HTTP'
-   sudo certbot --nginx -d <your_domain_name>.com -d www.<your_domain_name>.com
-   ```
-   
-   > If you are using **AWS** do not enable ***ufw***. AWS routing works as firewall.
-
-	
-# Tutorial Links
-  - [SSL Installation Nginx with Django](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
-  - [Nginx + Django](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04)
-  - [Nginx + Django](https://jee-appy.blogspot.com/2017/01/deply-django-with-nginx.html)
-  - [Start Xampp on startup](https://salitha94.blogspot.com/2017/08/how-to-start-xampp-automatically-in.html)
-	
-	 
-# Debugging Rules :
-
-
-1. First stop nginx, gunicorn.
-2. Start server using python3 manage.py runserver.
-3. Fix what has gone wrong.
-4. Start gunicorn and type : sudo systemctl status gunicorn.
-5. If everything is ok, type : sudo systemctl start gunicorn and sudo systtemctl start nginx.
-6. HTTP Port 80 must be forwarded in TCP. Or use Default HTTP port forward. 
-7. Check if MySQL xampp database is up or not. Stop Xampp apache server.
-8. Check if ufw has all port forwarding like Port 80 and 443.
-
-
-
-
-
-
-
+ 
 
 
 
