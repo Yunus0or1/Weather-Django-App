@@ -11,6 +11,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from services import weather_api_call
 
+
 @api_view(['GET'])
 def ping(request):
     return JsonResponse({"name": "weatherservice",
@@ -21,14 +22,15 @@ def ping(request):
 @api_view(['GET'])
 def getCurrentWeather(request, city):
     at = request.GET.get('at')
-    print(at)
 
-    if at :
-        weather_api_call.currentWeatherAPICall(cityName=city)
+    if at:
+        weatherData = weather_api_call.currentWeatherAPICall(cityName=city)
+
+        return JsonResponse(weatherData, status=200)
 
     if at is None:
-        weather_api_call.currentWeatherAPICall(cityName=city)
+        return weather_api_call.currentWeatherAPICall(cityName=city)
+
     return JsonResponse({"name": "weatherservice",
                          "status": "ok",
                          "version": settings.VERSION}, status=200)
-
