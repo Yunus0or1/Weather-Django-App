@@ -14,7 +14,7 @@
    sudo apt-get install python3-virtualenv
    ```
    	
- - Install Django with other requirements 
+ **Install Django with other requirements**
 
    - Create a virtualenv inside the Django Project folder or where you want : 
      ```
@@ -25,7 +25,7 @@
      source django_env/bin/activate
      ```
 	
-   > Regardless of which version of Python you are using, when the virtual environment is activated, you should use the pip command (not pip3).
+     > Regardless of which version of Python you are using, when the virtual environment is activated, you should use the pip command (not pip3).
     
    - When you are in Virtual Environment install Django and other libraries :	
      ```
@@ -37,7 +37,7 @@
      sudo touch .env
 	 sudo chmod a+rwx .env
 	 echo "DEBUG=False" >> .env
-	 echo "SECRET_KEY=YOUR_SECRE_KEY" >> .env (Do not add !, #, / character in SECRET_KEY when using this command)
+	 echo "SECRET_KEY=YOUR_SECRET_KEY" >> .env (Do not add !, #, / character in SECRET_KEY when using this command)
 	 echo "WEATHER_API_KEY=YOUR_WEATHER_API_KEY" >> .env
      ```
 
@@ -46,7 +46,7 @@
      gunicorn --bind 0.0.0.0:8000 <folder_name_where_wsgi_file_exists>.wsgi # Example ecom.wsgi or myProject.wsgi
      ```	
 
- - Create a Gunicorn systemd Service File to start Django server on boot.
+ **Create a Gunicorn systemd Service File to start Django server on boot**
    - Type this command.
      ```
      sudo nano /etc/systemd/system/gunicorn.service
@@ -73,7 +73,7 @@
      
      > Next, check for the existence of the <any_name>.sock file within your project directory
 	
- - Configure Nginx
+ **Configure Nginx**
    - Install it 
      ```
      sudo apt-get install nginx
