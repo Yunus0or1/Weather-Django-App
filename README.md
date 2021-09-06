@@ -47,31 +47,31 @@
      ```	
 
  - **Create a Gunicorn systemd Service File to start Django server on boot**
-    - Type this command.
+   - Type this command.
+     ```
+     sudo nano /etc/systemd/system/gunicorn.service
+     ```
+   - Copy paste these lines and set **project locations** according to your config :
       ```
-      sudo nano /etc/systemd/system/gunicorn.service
-      ```
-    - Copy paste these lines and set **project locations** according to your config :
-      ```
-      [Unit]
-      Description=gunicorn daemon
-      After=network.target
-      [Service]
-      User=yunus
-      Group=www-data
-      WorkingDirectory=/home/<user>/Desktop/<django_project_folder>
-      ExecStart=/home/<user>/Desktop/<django_project_folder>/django_env/bin/gunicorn --access-logfile - --workers 3 --timeout 300 --bind unix:/home/<user>/Desktop/<django_project_folder>/<any_name>.sock <django_project_folder>.wsgi:application
-      [Install]
-      WantedBy=multi-user.target
-      #<any_name>.sock will be created automatically
-      ```
-    - Now write these.
-      ```
-      sudo systemctl start gunicorn
-      sudo systemctl enable gunicorn
-      ```
+     [Unit]
+     Description=gunicorn daemon
+     After=network.target
+     [Service]
+     User=<user>
+     Group=www-data
+     WorkingDirectory=/home/<user>/Desktop/<django_project_folder>
+     ExecStart=/home/<user>/Desktop/<django_project_folder>/django_env/bin/gunicorn --access-logfile - --workers 3 --timeout 300 --bind unix:/home/<user>/Desktop/<django_project_folder>/<any_name>.sock <django_project_folder>.wsgi:application
+     [Install]
+     WantedBy=multi-user.target
+     #<any_name>.sock will be created automatically
+     ```
+   - Now write these.
+     ```
+     sudo systemctl start gunicorn
+     sudo systemctl enable gunicorn
+     ```
      
-      > Next, check for the existence of the <any_name>.sock file within your project directory
+     > Next, check for the existence of the <any_name>.sock file within your project directory
 	
  - **Configure Nginx**
    - Install it 
