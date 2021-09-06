@@ -112,6 +112,10 @@
      ```
      sudo systemctl restart nginx
      ```
+	 
+	 
+
+***YOU DO HAVE A FULL RUNNING DJANGO SERVER***
  
 
 
