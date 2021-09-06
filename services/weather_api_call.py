@@ -1,8 +1,6 @@
-import json
 import requests
 from django.conf import settings
 from django.http import JsonResponse
-
 from models.geo_model import GeoModel
 from models.weather_model import WeatherModel
 
@@ -20,6 +18,7 @@ def currentWeatherAPICall(cityName):
                 "Content-Type": "application/json",
             })
 
+        # Recieved a response properly so decoding data
         if getCurrentWeatherDataResponse and getCurrentWeatherDataResponse.status_code == 200:
             data = getCurrentWeatherDataResponse.json()
             weatherData = WeatherModel.toJsonMap(
@@ -30,7 +29,9 @@ def currentWeatherAPICall(cityName):
             )
             return JsonResponse(weatherData, status=200)
         else:
+            # means there is an error in response code. So we will destructure it and send appropriate response
             data = getCurrentWeatherDataResponse.json()
+            statusCode = getCurrentWeatherDataResponse.status_code
             error = "Something went wrong"
             error_code = "internal_api_error"
 
@@ -45,9 +46,10 @@ def currentWeatherAPICall(cityName):
             return JsonResponse({
                 "error": error,
                 "error_code": error_code
-            }, status=getCurrentWeatherDataResponse.status_code)
+            }, status=statusCode)
 
     except Exception as e:
+        # If any error happens in parsing or the server is down, this response will be sent
         return JsonResponse({
             "error": "Something went wrong",
             "error_code": "internal_server_error"
@@ -89,7 +91,7 @@ def dateWeatherAPICall(lat, lng):
             "error_code": "internal_server_error"
         }, status=500)
 
-
+# This api is to get Geo Coding of a particular city
 def getCityGeoCoding(cityName):
     try:
         endPoint = '/geo/1.0/direct?q=' + cityName + '&appid=' + settings.WEATHER_API_KEY
@@ -101,6 +103,7 @@ def getCityGeoCoding(cityName):
                 "Content-Type": "application/json",
             })
 
+        # If the list has at least one data, we assume successful fetch of Lat, Lng
         if getCityGeoCodingResponse \
                 and getCityGeoCodingResponse.status_code == 200 \
                 and len(getCityGeoCodingResponse.json()) > 0:
@@ -109,12 +112,12 @@ def getCityGeoCoding(cityName):
 
         else:
             return JsonResponse({
-                "error": "Something went wrong",
-                "error_message": 'city not found'
+                "error": "City not found",
+                "error_code": 'city_not_found'
             }, status=404)
 
     except Exception as e:
-        print(e)
+        # If any error happens in parsing or the server is down, this response will be sent
         return JsonResponse({
             "error": "Something went wrong",
             "error_code": "internal_server_error"

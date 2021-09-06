@@ -1,48 +1,4 @@
-import json
-import random
 from datetime import datetime, timezone, timedelta
-import time
-from django.db import connection
-from django.http import JsonResponse
-import jwt
-from django.conf import settings
-from pyfcm import FCMNotification
-import uuid
-import ast
-from models.constants import ServerEnum
-
-
-
-
-def sendConnectionErrorResponse():
-    return JsonResponse({
-            'status': False,
-            'responseMessage': ServerEnum.RESPONSE_CONNECTION_ERROR
-        })
-
-
-def sendDatabaseConnectionErrorResponse():
-    return JsonResponse({
-        'status': False,
-        'responseMessage': ServerEnum.RESPONSE_DATABASE_CONNECTION_ERROR
-    })
-
-def decodeJson(requestBody):
-    bodyUnicode = requestBody.decode('utf-8')
-    body = json.loads(bodyUnicode)
-    return body
-
-
-def naValue(data):
-    if data:
-        return data
-    return "N/A"
-
-def checkKey(key, jsonData):
-    if key in jsonData:
-        return jsonData[key]
-    return None
-
 
 def convertCurrentLocalTimeToUTCTimestamp(timeDelta):
     timeDeltaHour = int(timeDelta.split(":")[0])
