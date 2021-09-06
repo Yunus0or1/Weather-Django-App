@@ -52,7 +52,7 @@
      sudo nano /etc/systemd/system/gunicorn.service
      ```
    - Copy paste these lines and set **project locations** according to your config :
-      ```
+     ```
      [Unit]
      Description=gunicorn daemon
      After=network.target
