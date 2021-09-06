@@ -7,9 +7,9 @@ class WeatherModel:
         self.temperature = temperature
 
     @staticmethod
-    def toJsonMap(clouds,humidity, pressure, temparature):
-        clouds =  clouds
-        humidity =  humidity+ '%'
-        pressure = pressure+ ' hPa'
-        temperature =  temparature+ "C"
+    def toJsonMap(clouds, humidity, pressure, temparature):
+        clouds = clouds
+        humidity = humidity + '%'
+        pressure = pressure + ' hPa'
+        temperature = temparature + "C"
         return WeatherModel(clouds, humidity, pressure, temperature).__dict__

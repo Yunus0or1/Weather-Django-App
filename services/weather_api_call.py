@@ -1,6 +1,8 @@
 import requests
 from django.conf import settings
 from django.http import JsonResponse
+
+from general import util
 from models.geo_model import GeoModel
 from models.weather_model import WeatherModel
 
@@ -13,6 +15,7 @@ def currentWeatherAPICall(cityName):
         endPoint = '/data/2.5/weather?q=' + cityName + '&units=metric' + '&appid=' + settings.WEATHER_API_KEY
         apiCallIp = CURRENT_WEATHER_DATA_SERVER_DOMAIN + endPoint
 
+        # Getting current weather data
         getCurrentWeatherDataResponse = requests.get(
             apiCallIp, timeout=5, headers={
                 "Content-Type": "application/json",
@@ -56,27 +59,42 @@ def currentWeatherAPICall(cityName):
         }, status=500)
 
 
-def dateWeatherAPICall(lat, lng):
+def dateWeatherAPICall(lat, lng, dateInfo):
     try:
-
-        endPoint = '/data/2.5/onecall?lat=' + str(lat) + '&lon=' + str(lng) + '&exclude=current,alerts' \
+        endPoint = '/data/2.5/onecall?lat=' + str(lat) + '&lon=' + str(lng) + '&exclude=current,minutely,hourly,alerts' \
                    + '&units=metric' + '&appid=' + settings.WEATHER_API_KEY
         apiCallIp = CURRENT_WEATHER_DATA_SERVER_DOMAIN + endPoint
 
+        # Fetch 7 days forecast
         dateWeatherApiCallResponse = requests.get(
             apiCallIp, timeout=5, headers={
                 "Content-Type": "application/json",
             })
 
         if dateWeatherApiCallResponse and dateWeatherApiCallResponse.status_code == 200:
+            queryDate = dateInfo['date']
             data = dateWeatherApiCallResponse.json()
-            # weatherData = WeatherModel.toJsonMap(
-            #     clouds=data['daily']['weather'][0]['main'],
-            #     humidity=str(data['main']['humidity']),
-            #     pressure=str(data['main']['pressure']),
-            #     temparature=str(data['main']['temp_max'])
-            # )
-            return JsonResponse(data, status=200)
+            # This is daily weather forecast list data
+            dailyWeatherDataList = data['daily']
+
+            for singledailyWeatherData in dailyWeatherDataList:
+                dateString = util.convertTimestampToDate(singledailyWeatherData['dt'])
+
+                # Check if the any of the 7 days match with the query Date
+                if str(dateString) == str(queryDate):
+                    weatherData = WeatherModel.toJsonMap(
+                        clouds=singledailyWeatherData['weather'][0]['main'],
+                        humidity=str(singledailyWeatherData['humidity']),
+                        pressure=str(singledailyWeatherData['pressure']),
+                        temparature=str(singledailyWeatherData['temp']['day'])
+                    )
+                    return JsonResponse(weatherData, status=200)
+
+            # If somehow the data is not found then send the error response
+            return JsonResponse({
+                "error": "You can only request up to 7 days forecast from today",
+                "error_code": "future_forecast_limitation"
+            }, status=400)
 
         else:
             return JsonResponse({
@@ -85,11 +103,12 @@ def dateWeatherAPICall(lat, lng):
             }, status=dateWeatherApiCallResponse.status_code)
 
     except Exception as e:
-        print(e)
+        # If any error happens in parsing or the server is down, this response will be sent
         return JsonResponse({
             "error": "Something went wrong",
             "error_code": "internal_server_error"
         }, status=500)
+
 
 # This api is to get Geo Coding of a particular city
 def getCityGeoCoding(cityName):
@@ -97,7 +116,7 @@ def getCityGeoCoding(cityName):
         endPoint = '/geo/1.0/direct?q=' + cityName + '&appid=' + settings.WEATHER_API_KEY
         apiCallIp = CURRENT_WEATHER_DATA_SERVER_DOMAIN + endPoint
 
-        # Incoming response is a list. Whether I get the data or get a blank list
+        # Incoming response is a list. I get the list data or get a blank list
         getCityGeoCodingResponse = requests.get(
             apiCallIp, timeout=5, headers={
                 "Content-Type": "application/json",

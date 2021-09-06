@@ -1,27 +1,54 @@
 from datetime import datetime, timezone, timedelta
 
-def convertCurrentLocalTimeToUTCTimestamp(timeDelta):
-    timeDeltaHour = int(timeDelta.split(":")[0])
-    timeDeltaMinute = int(timeDelta.split(":")[1])
-    current_time = datetime.now(timezone.utc)
-    current_local_time_in_utc = current_time + timedelta(hours=timeDeltaHour) + timedelta(hours=timeDeltaMinute)
-    current_local_time_in_utc_timestamp = int(current_local_time_in_utc.timestamp())
-
-    return current_local_time_in_utc_timestamp
+from django.http import JsonResponse
 
 
-def convertTo12HourFormatTime(time):
-    return datetime.fromtimestamp(time, tz=timezone.utc).strftime('%Y-%m-%d %I:%M %p')
+def convertTimestampToDate(timestamp):
+    return datetime.fromtimestamp(timestamp).date()
 
 
-def utcTimeStamp():
-    from datetime import timezone
-    import datetime
+def convertToDate(stringDate):
+    try:
+        # Means this is a ISO format date
+        if 'T' in stringDate:
+            stringDate = stringDate.replace(' ', '+')
+            finalDate = datetime.strptime(stringDate, '%Y-%m-%dT%H:%M:%S%z')
 
-    dt = datetime.datetime.now()
+        if 'T' not in stringDate:
+            finalDate = datetime.strptime(stringDate, '%Y-%m-%d').replace(tzinfo=timezone.utc)
 
-    utc_time = dt.replace(tzinfo = timezone.utc)
-    utc_timestamp = utc_time.timestamp()
+        currentDate = datetime.now(timezone.utc)
+        difference = finalDate - currentDate
 
-    return int(utc_timestamp)
+        # If today process the date
+        if str(finalDate.date()) == str(currentDate.date()):
+            return JsonResponse({
+                "date": finalDate.date(),
+            }, status=200)
 
+        # Means Invalid Past date
+        if difference.days < 0:
+            return JsonResponse({
+                "error": "Date is in the past",
+                "error_code": "invalid date"
+            }, status=400)
+
+        # Means Future date which API does not allow us
+        if difference.days > 7:
+            return JsonResponse({
+                "error": "You can only request up to 7 days forecast from today",
+                "error_code": "future_forecast_limitation"
+            }, status=400)
+
+        # Date Process success. send the date back
+        return JsonResponse({
+            "date": finalDate.date(),
+        }, status=200)
+
+
+    except Exception as e:
+        # If any error happens in parsing, this response will be sent
+        return JsonResponse({
+            "error": "Invalid Date Format. Please use date and datetime stamps in the ISO 8601 format",
+            "error_code": "invalid_date_format"
+        }, status=400)
