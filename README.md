@@ -76,6 +76,8 @@
  - **Configure Nginx**
    - Install it 
      ```
+	 sudo fuser -k 80/tcp
+	 sudo fuser -k 443/tcp
      sudo apt-get install nginx
      ```
    - Create a coniguration file using this command with the any name.
