@@ -20,31 +20,31 @@
      ```
      virtualenv -p python3 django_env
      ```
-    - Activate it (Linux)
-      ```
-      source django_env/bin/activate
-      ```
+   - Activate it (Linux)
+     ```
+     source django_env/bin/activate
+     ```
 	
-    > Regardless of which version of Python you are using, when the virtual environment is activated, you should use the pip command (not pip3).
+   > Regardless of which version of Python you are using, when the virtual environment is activated, you should use the pip command (not pip3).
     
-    - When you are in Virtual Environment install Django and other libraries :	
-      ```
-      pip install -r requirements.txt
-      ```
+   - When you are in Virtual Environment install Django and other libraries :	
+     ```
+     pip install -r requirements.txt
+     ```
 
-    - You must create the .env file inside the project folder and run these commands:	
-      ```
-      sudo touch .env
-	  sudo chmod a+rwx .env
-	  echo "DEBUG=False" >> .env
-	  echo "SECRET_KEY=YOUR_SECRE_KEY" >> .env (Do not add !, #, / character in SECRET_KEY when using this command)
-	  echo "WEATHER_API_KEY=YOUR_WEATHER_API_KEY" >> .env
-      ```
+   - You must create the .env file inside the project folder and run these commands:	
+     ```
+     sudo touch .env
+	 sudo chmod a+rwx .env
+	 echo "DEBUG=False" >> .env
+	 echo "SECRET_KEY=YOUR_SECRE_KEY" >> .env (Do not add !, #, / character in SECRET_KEY when using this command)
+	 echo "WEATHER_API_KEY=YOUR_WEATHER_API_KEY" >> .env
+     ```
 
-    - Bind gunicorn with wsgi to test the server:
-      ```
-      gunicorn --bind 0.0.0.0:8000 <folder_name_where_wsgi_file_exists>.wsgi # Example ecom.wsgi or myProject.wsgi
-      ```	
+   - Bind gunicorn with wsgi to test the server:
+     ```
+     gunicorn --bind 0.0.0.0:8000 <folder_name_where_wsgi_file_exists>.wsgi # Example ecom.wsgi or myProject.wsgi
+     ```	
 
  - Create a Gunicorn systemd Service File to start Django server on boot.
    - Type this command.
@@ -71,7 +71,7 @@
      sudo systemctl enable gunicorn
      ```
      
-   > Next, check for the existence of the <any_name>.sock file within your project directory
+     > Next, check for the existence of the <any_name>.sock file within your project directory
 	
  - Configure Nginx
    - Install it 
