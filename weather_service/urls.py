@@ -14,6 +14,6 @@ handler404 = custom404
 
 urlpatterns = [
     re_path(r'^ping', weather_service_api_views.ping, name="ping"),
-    re_path(r'^forecast/(?P<city>[\w|\W]+)/$', weather_service_api_views.getCurrentWeather)
+    re_path(r'^forecast/(?P<city>[\w|\W]+)/$', weather_service_api_views.getCurrentWeather),
 ]
 

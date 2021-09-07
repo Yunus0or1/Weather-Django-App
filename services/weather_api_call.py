@@ -43,8 +43,8 @@ def currentWeatherAPICall(cityName):
                 error_code = "city_not_found"
 
             if data['message'] == 'internal_server_error':
-                error = "Something went wrong"
-                error_code = "internal_server_error"
+                error = "Something went wrong with weather service"
+                error_code = "internal_api_error"
 
             return JsonResponse({
                 "error": error,
@@ -97,9 +97,10 @@ def dateWeatherAPICall(lat, lng, dateInfo):
             }, status=400)
 
         else:
+            # Error return in Weather service Api call
             return JsonResponse({
                 "error": "Something went wrong",
-                "error_message": dateWeatherApiCallResponse.json()['message']
+                "error_code": dateWeatherApiCallResponse.json()['message']
             }, status=dateWeatherApiCallResponse.status_code)
 
     except Exception as e:

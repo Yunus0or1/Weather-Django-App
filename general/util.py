@@ -51,4 +51,4 @@ def convertToDate(stringDate):
         return JsonResponse({
             "error": "Invalid Date Format. Please use date and datetime stamps in the ISO 8601 format",
             "error_code": "invalid_date_format"
-        }, status=400)
+        }, status=404)

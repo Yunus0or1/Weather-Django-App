@@ -46,9 +46,10 @@ def getCurrentWeather(request, city):
             return dateInfoResponse
 
     # If everything somehow fails send this response
-    return JsonResponse({"name": "weatherservice",
-                         "status": "ok",
-                         "version": settings.VERSION}, status=200)
+    return JsonResponse({
+        "error": "Something went wrong",
+        "error_code": "internal_server_error"
+    }, status=500)
 
 
 # A custom 404 json response if the url is not matched in urls.py

@@ -1,3 +1,8 @@
+Weather service
+===============
+
+Fetch weather update.
+
 # Getting it running
  - Install Python using this command :
    ```
